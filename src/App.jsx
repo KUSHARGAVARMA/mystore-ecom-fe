@@ -7,6 +7,7 @@ import Footer from "./components/Footer/Footer";
 import { CartProvider } from "./context/Cart";
 import Categories from "./pages/Categories";
 import CategoryProductsPage from "./pages/CategoryProductPage";
+import CartPage from "./pages/CartPage";
 const App = () => {
   return (
     <Router>
@@ -19,7 +20,7 @@ const App = () => {
               <Route path="/products" element={<ProductListingPage />} />
               <Route path="/categories" element={<Categories />} />
               <Route path="/category/:categoryName" element={<CategoryProductsPage />} />
-              <Route path="/cart" element={<div>Cart Page</div>} />
+              <Route path="/cart" element={<CartPage/>} />
             </Routes>
           </main>
           <Footer />

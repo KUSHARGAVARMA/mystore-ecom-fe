@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import SkeletonLoader from "../../components/SkeletonLoader";
+import { useCart } from "../../context/Cart";
+import ProductItem from "../../components/ProductItem";
 
 
 const HomePage = () => {
@@ -10,6 +12,14 @@ const HomePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate=useNavigate()
   const [loading,setLoading] = useState(true)
+  const { handleCart } = useCart();
+  const [addedToCart,setAddedToCart] = useState(false)
+
+  const handleAddToCart = useCallback((productId) => {
+    handleCart(productId);
+    setAddedToCart(true);
+    setTimeout(() => setAddedToCart(false), 2000); // Show feedback for 2 seconds
+  }, [handleCart]);
 
   useEffect(() => {
     axios.get('https://fakestoreapi.com/products/categories')
@@ -81,15 +91,10 @@ const HomePage = () => {
       {/* Featured Products */}
       <h2 className="text-2xl font-bold mb-4">Featured Products</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-  {featuredProducts.map(product => (
-    <div key={product.id} className="bg-white shadow-md p-6 rounded-lg flex flex-col justify-between transform transition-transform hover:scale-105">
-      <div>
-        <img src={product.image} alt={product.title} className="w-full h-40 object-cover mb-4 rounded" />
-        <h3 className="text-lg font-semibold mb-2">{product.title}</h3>
-        <p className="text-gray-700 mb-2">{product.description}</p>
-      </div>
-      <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors mt-4">Add to Cart</button>
-    </div>
+  {featuredProducts.map(
+    product => (
+      <ProductItem product={product} size={"large"}/>
+
   ))}
 </div>
 

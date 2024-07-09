@@ -3,7 +3,7 @@ import axios from "axios";
 import { useCart } from "../../context/Cart"
 
 // Memoized ProductItem component with console log
-const ProductItem = memo(({ product, handleProductClick }) => {
+const ProductItem = memo(({ product, handleProductClick, size }) => {
     const { handleCart } = useCart();
     const [addedToCart, setAddedToCart] = useState(false);
   
@@ -17,12 +17,19 @@ const ProductItem = memo(({ product, handleProductClick }) => {
     return (
       <div className="bg-white shadow-md p-6 rounded-lg flex flex-col justify-between transform transition-transform hover:scale-105">
         <div onClick={() => handleProductClick(product)}>
-          <img
-            className="w-full h-40 object-cover mb-4 cursor-pointer rounded"
+          {console.log(size)}
+          {size==="large"? <img
+            className="w-full h-80 object-cover mb-4 cursor-pointer rounded"
             src={product.image}
             alt={product.title}
             loading="lazy"
-          />
+          />:<img
+          className="w-full h-40 object-cover mb-4 cursor-pointer rounded"
+          src={product.image}
+          alt={product.title}
+          loading="lazy"
+        />}
+      
           <h3 className="text-lg font-semibold mb-2">{product.title}</h3>
           <p className="text-gray-700 mb-2">${product.price}</p>
         </div>
