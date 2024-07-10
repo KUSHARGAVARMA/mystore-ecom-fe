@@ -5,44 +5,78 @@ import SkeletonLoader from "../../components/SkeletonLoader";
 import { useCart } from "../../context/Cart";
 import ProductItem from "../../components/ProductItem";
 
-
 const HomePage = () => {
+  // State variables
   const [categories, setCategories] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]); // New state for all products
   const [searchTerm, setSearchTerm] = useState("");
-  const navigate=useNavigate()
-  const [loading,setLoading] = useState(true)
+  const [searchResults, setSearchResults] = useState([]); // State for search results
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
   const { handleCart } = useCart();
-  const [addedToCart,setAddedToCart] = useState(false)
+  const [addedToCart, setAddedToCart] = useState(false);
 
-  const handleAddToCart = useCallback((productId) => {
-    handleCart(productId);
-    setAddedToCart(true);
-    setTimeout(() => setAddedToCart(false), 2000); // Show feedback for 2 seconds
-  }, [handleCart]);
+  // Function to handle adding to cart
+  const handleAddToCart = useCallback(
+    (productId) => {
+      handleCart(productId);
+      setAddedToCart(true);
+      setTimeout(() => setAddedToCart(false), 2000); // Show feedback for 2 seconds
+    },
+    [handleCart]
+  );
 
+  // Fetch categories and products
   useEffect(() => {
-    axios.get('https://fakestoreapi.com/products/categories')
-      .then(response => {
+    // Fetch categories
+    axios
+      .get("https://fakestoreapi.com/products/categories")
+      .then((response) => {
         setCategories(response.data);
-        setLoading(false)
+        setLoading(false);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error fetching categories:", error);
-        setLoading(false)
+        setLoading(false);
       });
 
-    axios.get('https://fakestoreapi.com/products?limit=4')
-      .then(response => {
+    // Fetch featured products
+    axios
+      .get("https://fakestoreapi.com/products?limit=4")
+      .then((response) => {
         setFeaturedProducts(response.data);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error fetching featured products:", error);
+      });
+
+    // Fetch all products
+    axios
+      .get("https://fakestoreapi.com/products")
+      .then((response) => {
+        setAllProducts(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching all products:", error);
       });
   }, []);
 
+  // Function to handle search input
   const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
+    const term = event.target.value.toLowerCase();
+    setSearchTerm(term);
+
+    if (term.trim() === "") {
+      setSearchResults([]);
+      return;
+    }
+
+    // Filter products based on search term
+    const filteredProducts = allProducts.filter((product) =>
+      product.title.toLowerCase().includes(term)
+    );
+    setSearchResults(filteredProducts);
   };
 
   return (
@@ -51,31 +85,48 @@ const HomePage = () => {
       <div className="bg-blue-500 text-white p-10 rounded-lg mb-6">
         <h1 className="text-4xl font-bold mb-2">Welcome to MyStore</h1>
         <p className="text-xl mb-4">Find the best products here!</p>
-        <button 
-        className="bg-white text-blue-500 px-4 py-2 rounded"
-        onClick={() => navigate(`/products`)}
->Shop Now</button>
+        <button
+          className="bg-white text-blue-500 px-4 py-2 rounded"
+          onClick={() => navigate(`/products`)}
+        >
+          Shop Now
+        </button>
       </div>
 
       {/* Search Bar */}
       <div className="mb-6">
-        <input 
-          type="text" 
-          value={searchTerm} 
-          onChange={handleSearch} 
-          className="w-full p-4 rounded border border-gray-300" 
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={handleSearch}
+          className="w-full p-4 rounded border border-gray-300"
           placeholder="Search for products..."
         />
       </div>
 
+      {/* Search Results */}
+      {searchTerm && (
+        <div className="container mx-auto p-4">
+          <h2 className="text-2xl font-bold mb-4">Search Results</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {searchResults.length > 0 ? (
+              searchResults.map((product) => (
+                <ProductItem key={product.id} product={product} />
+              ))
+            ) : (
+              <p>No products found.</p>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Categories */}
       <h2 className="text-2xl font-bold mb-4">Categories</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
-      {loading ? (
+        {loading ? (
           Array.from({ length: 4 }).map((_, index) => <SkeletonLoader key={index} />)
-        ) :
-        (
-          categories.map(category => (
+        ) : (
+          categories.map((category) => (
             <div
               key={category}
               className="bg-white shadow-md p-6 rounded-lg flex items-center justify-center text-xl font-semibold text-gray-700 hover:bg-gray-100 cursor-pointer"
@@ -84,20 +135,16 @@ const HomePage = () => {
               {category}
             </div>
           ))
-        
         )}
       </div>
 
       {/* Featured Products */}
       <h2 className="text-2xl font-bold mb-4">Featured Products</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-  {featuredProducts.map(
-    product => (
-      <ProductItem product={product} size={"large"}/>
-
-  ))}
-</div>
-
+        {featuredProducts.map((product) => (
+          <ProductItem key={product.id} product={product} size={"large"} />
+        ))}
+      </div>
     </div>
   );
 };
