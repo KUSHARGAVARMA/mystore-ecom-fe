@@ -8,6 +8,7 @@ import { CartProvider } from "./context/Cart";
 import Categories from "./pages/Categories";
 import CategoryProductsPage from "./pages/CategoryProductPage";
 import CartPage from "./pages/CartPage";
+import './i18n';
 const App = () => {
   return (
     <Router>

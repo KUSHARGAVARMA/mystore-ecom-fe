@@ -4,20 +4,20 @@ import { useNavigate } from "react-router-dom";
 import SkeletonLoader from "../../components/SkeletonLoader";
 import { useCart } from "../../context/Cart";
 import ProductItem from "../../components/ProductItem";
+import { useTranslation } from 'react-i18next';
 
 const HomePage = () => {
-  // State variables
+  const { t, i18n } = useTranslation();
   const [categories, setCategories] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
-  const [allProducts, setAllProducts] = useState([]); // New state for all products
+  const [allProducts, setAllProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState([]); // State for search results
+  const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const { handleCart } = useCart();
   const [addedToCart, setAddedToCart] = useState(false);
 
-  // Function to handle adding to cart
   const handleAddToCart = useCallback(
     (productId) => {
       handleCart(productId);
@@ -27,9 +27,7 @@ const HomePage = () => {
     [handleCart]
   );
 
-  // Fetch categories and products
   useEffect(() => {
-    // Fetch categories
     axios
       .get("https://fakestoreapi.com/products/categories")
       .then((response) => {
@@ -41,7 +39,6 @@ const HomePage = () => {
         setLoading(false);
       });
 
-    // Fetch featured products
     axios
       .get("https://fakestoreapi.com/products?limit=4")
       .then((response) => {
@@ -51,7 +48,6 @@ const HomePage = () => {
         console.error("Error fetching featured products:", error);
       });
 
-    // Fetch all products
     axios
       .get("https://fakestoreapi.com/products")
       .then((response) => {
@@ -62,7 +58,6 @@ const HomePage = () => {
       });
   }, []);
 
-  // Function to handle search input
   const handleSearch = (event) => {
     const term = event.target.value.toLowerCase();
     setSearchTerm(term);
@@ -72,24 +67,25 @@ const HomePage = () => {
       return;
     }
 
-    // Filter products based on search term
     const filteredProducts = allProducts.filter((product) =>
       product.title.toLowerCase().includes(term)
     );
     setSearchResults(filteredProducts);
   };
 
+
   return (
     <div className="container mx-auto p-4">
+
       {/* Hero Section */}
       <div className="bg-blue-500 text-white p-10 rounded-lg mb-6">
-        <h1 className="text-4xl font-bold mb-2">Welcome to MyStore</h1>
-        <p className="text-xl mb-4">Find the best products here!</p>
+        <h1 className="text-4xl font-bold mb-2">{t('welcome')}</h1>
+        <p className="text-xl mb-4">{t('findBestProducts')}</p>
         <button
           className="bg-white text-blue-500 px-4 py-2 rounded"
           onClick={() => navigate(`/products`)}
         >
-          Shop Now
+          {t('shopNow')}
         </button>
       </div>
 
@@ -100,28 +96,28 @@ const HomePage = () => {
           value={searchTerm}
           onChange={handleSearch}
           className="w-full p-4 rounded border border-gray-300"
-          placeholder="Search for products..."
+          placeholder={t('searchPlaceholder')}
         />
       </div>
 
       {/* Search Results */}
       {searchTerm && (
         <div className="container mx-auto p-4">
-          <h2 className="text-2xl font-bold mb-4">Search Results</h2>
+          <h2 className="text-2xl font-bold mb-4">{t('searchResults')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {searchResults.length > 0 ? (
               searchResults.map((product) => (
                 <ProductItem key={product.id} product={product} />
               ))
             ) : (
-              <p>No products found.</p>
+              <p>{t('noProductsFound')}</p>
             )}
           </div>
         </div>
       )}
 
       {/* Categories */}
-      <h2 className="text-2xl font-bold mb-4">Categories</h2>
+      <h2 className="text-2xl font-bold mb-4">{t('categories')}</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
         {loading ? (
           Array.from({ length: 4 }).map((_, index) => <SkeletonLoader key={index} />)
@@ -139,7 +135,7 @@ const HomePage = () => {
       </div>
 
       {/* Featured Products */}
-      <h2 className="text-2xl font-bold mb-4">Featured Products</h2>
+      <h2 className="text-2xl font-bold mb-4">{t('featuredProducts')}</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {featuredProducts.map((product) => (
           <ProductItem key={product.id} product={product} size={"large"} />
