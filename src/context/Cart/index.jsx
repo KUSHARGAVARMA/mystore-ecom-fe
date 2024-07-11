@@ -11,8 +11,12 @@ export const CartProvider = ({ children }) => {
     setCart((prevCart) => [...prevCart, productId]);
   }, []);
 
+  const removeFromCart = useCallback((productId)=>{
+setCart((prevCart) => prevCart.filter((item) => item !== productId));
+  },[])
+
   return (
-    <CartContext.Provider value={{ cart, handleCart }}>
+    <CartContext.Provider value={{ cart, handleCart, removeFromCart }}>
       {children}
     </CartContext.Provider>
   );

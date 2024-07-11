@@ -1,10 +1,13 @@
 import axios from "axios";
 import React, { useEffect, useState, memo } from "react";
 import SkeletonLoader from "../SkeletonLoader";
+import { useCart } from "../../context/Cart";
 
 // Memoized ProductItem component with console log
 const RenderCartProducts = memo(({ product }) => {
   const [productList, setProductList] = useState(null);
+  const {removeFromCart} = useCart();
+
 
   useEffect(() => {
     axios
@@ -35,7 +38,8 @@ const RenderCartProducts = memo(({ product }) => {
       <div className="flex-1 flex flex-col items-end ">
         <h3 className="text-lg font-semibold mb-2">{productList.title}</h3>
         <p className="text-gray-700 mb-2">${productList.price}</p>
-        <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+        <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+        onClick={()=>{removeFromCart(productList.id)}}>
           Remove from Cart
         </button>
       </div>
