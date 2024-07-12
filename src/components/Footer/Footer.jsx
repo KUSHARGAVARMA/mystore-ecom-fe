@@ -11,20 +11,20 @@ const Footer = () => {
   };
 
   return (
-    <div className="bg-gray-800 text-white p-4 mt-6">
-      <div className="container mx-auto flex justify-between items-center">
-        <div>
+    <div className="bg-gray-800 text-white p-6 mt-6">
+      <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="text-center md:text-left">
           <h3 className="font-bold mb-2">MyStore</h3>
-          <p>&copy; 2024 MyStore. All rights reserved.</p>
+          <p>&copy; 2024 MyStore.</p>
+          <p>All rights reserved.</p>
         </div>
-        <div className="flex space-x-4">
-          <a href="#" className="hover:text-gray-400">Privacy Policy</a>
-          <a href="#" className="hover:text-gray-400">Terms of Service</a>
+        <div className="flex flex-col items-center md:items-start">
+          <a href="#" className="hover:text-gray-400 mb-2">Privacy Policy</a>
+          <a href="#" className="hover:text-gray-400 mb-2">Terms of Service</a>
           <a href="#" className="hover:text-gray-400">Contact Us</a>
         </div>
-        {/* Language Switcher */}
-        <div className="flex justify-end">
-          <label htmlFor="language-select" className="mr-2">Language:</label>
+        <div className="flex flex-col items-center md:items-end">
+          <label htmlFor="language-select" className="mb-2">Language:</label>
           <select
             id="language-select"
             onChange={changeLanguage}
