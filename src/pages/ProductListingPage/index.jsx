@@ -69,6 +69,10 @@ const ProductModal = ({ product, onClose }) => {
 // Product Listing Page Component
 const ProductListingPage = () => {
 
+      useEffect(() => {
+    adobe.target.triggerView("product-details");
+  }, []);
+
     const [productsList, setProductsList] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [loading,setLoading] = useState(true)
